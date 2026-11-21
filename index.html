@@ -67,6 +67,8 @@
       position: relative;
       min-height: 100vh;
       line-height: 1.65;
+      /* Push content above the floating player (height ~62px + bottom offset ~20px + buffer) */
+      padding-bottom: 100px;
     }
 
     /* Ambient Background Glow */
@@ -1634,19 +1636,26 @@
     .playing .eq-bar:nth-child(4) { animation: eq 0.9s ease-in-out infinite alternate 0.1s; }
 
     .player-play-btn {
-      width: 38px;
-      height: 38px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
       background: var(--rose);
       border: none;
       color: #fff;
       display: grid;
       place-items: center;
-      font-size: 14px;
       cursor: pointer;
       box-shadow: 0 4px 15px rgba(226, 75, 96, 0.4);
       transition: var(--transition-smooth);
       flex-shrink: 0;
+      padding: 0;
+    }
+
+    .player-play-btn svg {
+      width: 16px;
+      height: 16px;
+      fill: #fff;
+      display: block;
     }
 
     .player-play-btn:hover {
@@ -1659,7 +1668,7 @@
        ========================================================================== */
     .footer {
       border-top: 1px solid rgba(255, 255, 255, 0.06);
-      padding: clamp(40px, 6vw, 60px) 0 calc(var(--safe-bottom) + 50px);
+      padding: clamp(40px, 6vw, 60px) 0 calc(var(--safe-bottom) + 120px);
       text-align: center;
       position: relative;
       z-index: 10;
@@ -1837,7 +1846,7 @@
   <canvas id="starCanvas" class="ambient-canvas" aria-hidden="true"></canvas>
   <div class="ambient-bg" aria-hidden="true"></div>
 
-  <!-- Audio Element (Give Me Your Forever) -->
+  <!-- Audio Element — loop ensures it repeats automatically -->
   <audio id="bgAudio" loop preload="auto">
     <source src="./Give Me Your Forever.mp3" type="audio/mpeg">
     <source src="Give Me Your Forever.mp3" type="audio/mpeg">
@@ -1857,7 +1866,7 @@
       </p>
 
       <div class="curtain-track-pill">
-        <span class="music-icon">♫</span>
+        <svg class="music-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:middle;margin-right:6px;"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
         <span>Soundtrack: <strong>Give Me Your Forever</strong></span>
       </div>
 
@@ -1889,7 +1898,9 @@
 
       <!-- Music status toggle in header -->
       <button class="nav-audio-btn" id="navAudioToggle" aria-label="Toggle background music">
-        <span class="nav-audio-icon">♫</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0">
+          <path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/>
+        </svg>
         <span id="navAudioLabel">Play Music</span>
       </button>
     </div>
@@ -1966,7 +1977,7 @@
           <div class="image-zoom-indicator">⚲</div>
         </div>
         <div class="story-copy">
-          <div class="story-badge">Those Eyes 👀</div>
+          <div class="story-badge">That Gaze ✦</div>
           <h3 class="story-heading">The gaze that gets me every single time.</h3>
           <p class="story-text">
             There is something undeniably striking about your eyes. They are deep, warm, and observant—the kind of eyes that make the entire room fade into the background.
@@ -1985,7 +1996,7 @@
           <div class="image-zoom-indicator">⚲</div>
         </div>
         <div class="story-copy">
-          <div class="story-badge">That Smile ✧</div>
+          <div class="story-badge">That Smile ✦</div>
           <h3 class="story-heading">The smile I fell for.</h3>
           <p class="story-text">
             Your smile has this effortless warmth that stays with someone long after the moment is gone. It brings comfort, it radiates pure sunshine, and it's one of those sights I could never get tired of seeing.
@@ -2068,16 +2079,18 @@
         </div>
       </div>
 
-      <!-- Interactive Reason Generator -->
+            <!-- Things I Notice About You -->
+            <!-- Things I Notice About You -->
       <div class="reasons-box reveal">
-        <h3>Little Things That Make You Irreplaceable</h3>
-        <p style="color: var(--fg-secondary); font-size: 14px;">Tap below whenever you need a sweet reminder</p>
+        <span class="section-eyebrow" style="margin-bottom: 8px;">Unspoken Thoughts</span>
+        <h3>Things I Notice About You</h3>
+        <p style="color: var(--fg-secondary); font-size: 14.5px;">The small, real moments and quiet reasons that stay in my mind.</p>
         <div class="reason-display" id="reasonDisplay">
-          "The way you make ordinary conversations feel like the best part of the day."
+          "The way you sit quietly on the steps in that yellow floral dress, looking down with your thoughts somewhere far away."
         </div>
-        <button class="btn-reason" id="nextReasonBtn" aria-label="Reveal another reason">
-          <span>Reveal Another Reason</span>
-          <span aria-hidden="true">✨</span>
+        <button class="btn-reason" id="nextReasonBtn" aria-label="Reveal another thought">
+          <span>Reveal Another Thought</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;"><path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z"/></svg>
         </button>
       </div>
     </section>
@@ -2145,6 +2158,8 @@
       </div>
     </section>
 
+      <!-- Bottom clearance so no text or footer element is ever behind the floating player -->
+    <div class="player-clearance" style="height: 120px; width: 100%; pointer-events: none;" aria-hidden="true"></div>
   </main>
 
   <!-- ==========================================================================
@@ -2209,7 +2224,15 @@
       </span>
     </div>
     <button class="player-play-btn" id="playerPlayBtn" aria-label="Play or pause soundtrack">
-      <span id="playIcon">⏸</span>
+      <svg id="playIconSvg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <!-- Play triangle — shown when paused -->
+        <path id="svgPlay" d="M8 5.14v14l11-7-11-7z"/>
+        <!-- Pause bars — shown when playing -->
+        <g id="svgPause" style="display:none">
+          <rect x="6" y="4" width="4" height="16" rx="1"/>
+          <rect x="14" y="4" width="4" height="16" rx="1"/>
+        </g>
+      </svg>
     </button>
   </aside>
 
@@ -2230,95 +2253,302 @@
        -------------------------------------------------------------------------- */
     const PHOTOS = [
       {
-        file: "IMG-20260228-WA0131.jpg",
-        title: "Captivating Gaze",
-        category: "eyes",
-        date: "Feb 28, 2026",
-        note: "Those eyes will forever have my full attention. There is so much unspoken depth in your look."
+            "file": "IMG-20260228-WA0131.jpg",
+            "title": "Golden Stillness",
+            "category": "elegance",
+            "date": "Feb 28, 2026",
+            "note": "Sitting on the steps outside in that yellow floral dress, looking down with quiet thoughts \u2014 you make even waiting on a set of stairs look naturally graceful."
       },
       {
-        file: "IMG-20260228-WA0134.jpg",
-        title: "Soft Composure",
-        category: "elegance",
-        date: "Feb 28, 2026",
-        note: "Completely natural, unposed and beautiful. You are effortlessly yourself."
+            "file": "IMG-20260228-WA0134.jpg",
+            "title": "The Direct Gaze",
+            "category": "eyes",
+            "date": "Feb 28, 2026",
+            "note": "Arms resting across your knees, looking straight into the lens with that calm, unbothered stare. That steady look has a magnetic presence that stops anyone mid-sentence."
       },
       {
-        file: "IMG-20260328-WA0123.jpg",
-        title: "The Infectious Smile",
-        category: "eyes",
-        date: "March 28, 2026",
-        note: "This smile has gotten me through long days. It's the kind of joy that lights up everything around it."
+            "file": "IMG-20260328-WA0123.jpg",
+            "title": "The Butterfly Smile",
+            "category": "eyes",
+            "date": "March 28, 2026",
+            "note": "Inside the rehearsal studio with the guitars behind you, wearing that black tee and the little sticker by your eye. Your smile here is so relaxed and warm \u2014 pure, unguarded joy."
       },
       {
-        file: "IMG-20260427-WA0027.jpg",
-        title: "Golden Aura",
-        category: "elegance",
-        date: "April 27, 2026",
-        note: "The light in this picture is stunning, but honestly, it’s just highlighting the glow you already have."
+            "file": "IMG-20260427-WA0027.jpg",
+            "title": "Pure Joy",
+            "category": "candid",
+            "date": "April 27, 2026",
+            "note": "Head tilted back, eyes closed, arms open wide in full, genuine laughter at the event. You look so radiant when you are laughing with your whole heart."
       },
       {
-        file: "IMG-20260427-WA0089.jpg",
-        title: "Simply You",
-        category: "candid",
-        date: "April 27, 2026",
-        note: "Just Camille being Camille. Grounded, real, and wonderfully one-of-a-kind."
+            "file": "IMG-20260427-WA0089.jpg",
+            "title": "Afternoon Light",
+            "category": "eyes",
+            "date": "April 27, 2026",
+            "note": "Sunlight catching your braids and the warm amber in your eyes, hand resting gently against your cheek. The afternoon sun was made for your skin."
       },
       {
-        file: "IMG-20260706-WA0026.jpg",
-        title: "Summer Sweetness",
-        category: "candid",
-        date: "July 6, 2026",
-        note: "A quiet summer moment. I love how genuine your expressions always are."
+            "file": "IMG-20260706-WA0026.jpg",
+            "title": "Red Carpet Glamour",
+            "category": "elegance",
+            "date": "July 6, 2026",
+            "note": "Dressed in all black with that chic choker neck, glamorous blonde curls, and a bold red lip holding your silver clutch. You carry yourself like the main event."
       },
       {
-        file: "IMG-20261011-WA0042.jpg",
-        title: "Autumn Radiance",
-        category: "elegance",
-        date: "Oct 11, 2026",
-        note: "Your poise and elegance here is unmatched. You carry yourself with such quiet strength."
+            "file": "IMG-20261011-WA0042.jpg",
+            "title": "Sunset on the Ridge",
+            "category": "candid",
+            "date": "Oct 11, 2026",
+            "note": "High up on the hilltop viewpoint with the entire city and purple jacarandas below, laughing into the sunset in your sunglasses and lavender shawl. Completely free."
       },
       {
-        file: "IMG-20261011-WA0077.jpg",
-        title: "Playful Spark",
-        category: "candid",
-        date: "Oct 11, 2026",
-        note: "That cheeky, funny expression! Your sense of humor is easily one of my favorite things about you."
+            "file": "IMG-20261011-WA0077.jpg",
+            "title": "Sunlit Elegance",
+            "category": "elegance",
+            "date": "Oct 11, 2026",
+            "note": "Out on the terrace in that printed wrap dress, one hand touching your hair against the railing in the breeze. Effortless poise that looks straight out of a magazine."
       },
       {
-        file: "IMG-20261026-WA0056.jpg",
-        title: "Striking Presence",
-        category: "elegance",
-        date: "Oct 26, 2026",
-        note: "Breathtaking. Some people just naturally command grace, and you are definitely one of them."
+            "file": "IMG-20261026-WA0056.jpg",
+            "title": "The Balcony Turn",
+            "category": "candid",
+            "date": "Oct 26, 2026",
+            "note": "High above the city under the blue sky and clouds, turning mid-step in your blue floral dress with matching blue hair ribbons and heels. A spontaneous, perfect moment."
       },
       {
-        file: "IMG-20261026-WA0068.jpg",
-        title: "Gentle Moments",
-        category: "candid",
-        date: "Oct 26, 2026",
-        note: "Soft and peaceful. Reminds me that behind everything, you have such a gentle heart."
+            "file": "IMG-20261026-WA0068.jpg",
+            "title": "The Brightest Smile",
+            "category": "eyes",
+            "date": "Oct 26, 2026",
+            "note": "Bright sunshine, red-tipped nails, pearl bracelet, hand touching your cheek, and that huge, glowing smile. It is impossible to look at this and not feel happy."
       },
       {
-        file: "IMG-20261113-WA0076.jpg",
-        title: "Timeless Charm",
-        category: "eyes",
-        date: "Nov 13, 2026",
-        note: "The most recent memory, looking as angelic as ever. You truly never lose your magic."
+            "file": "IMG-20261113-WA0076.jpg",
+            "title": "The Green Wall",
+            "category": "elegance",
+            "date": "Nov 13, 2026",
+            "note": "Against that lush wall of green leaves, your burgundy braids falling over your shoulder, sunglasses perched, with that subtle, knowing half-smile. Quiet, timeless beauty."
       }
-    ];
+];
 
     const REASONS = [
-      "The way you make ordinary conversations feel like the best part of the day.",
-      "How genuine and unapologetic you are about who you are.",
-      "That contagious laugh that immediately lifts the mood of anyone nearby.",
-      "Your sharp wit and the playful banter you always bring.",
-      "Those deep brown eyes that make everything else fade away.",
-      "The way you care about things deeply, even when you try to act nonchalant.",
-      "Your incredible taste and the effortless way you carry yourself.",
-      "How talking to you feels natural and safe, like coming home.",
-      "Because you are Camille—and there has never been anyone quite like you."
-    ];
+      "The way you sit quietly on the steps in that yellow floral dress, looking down with your thoughts somewhere far away.",
+      "That calm, direct stare you gave the camera with your arms crossed \u2014 completely unbothered and magnetic.",
+      "That sweet little sticker by your eye in the studio and the genuine smile that came with it.",
+      "The way you throw your head back and laugh with your whole heart, eyes squeezed shut and arms wide open.",
+      "How the afternoon golden hour light hits your cheek and brings out the warm amber in your eyes.",
+      "Walking into an event in that all-black dress and blonde curls, looking like the entire room belonged to you.",
+      "Standing on that hilltop viewpoint, laughing with the whole city and purple trees stretching behind you.",
+      "The way you run your hand through your hair on a sunny terrace in that wrap dress, looking completely effortless.",
+      "That spontaneous, over-the-shoulder smile on the balcony with the blue sky and clouds behind you.",
+      "Your close-up selfie in the bright sun, red nails, beaded braids, and a smile so wide it is impossible not to smile back.",
+      "Resting against that lush green wall with your burgundy braids, looking into the lens with that soft, knowing smirk.",
+      "You never look like you are trying too hard. You just show up and you are naturally captivating.",
+      "The way you dress with intention \u2014 whether it is a floral sundress or an all-black evening look, you own it.",
+      "How your braids always have the prettiest details, from beads to matching ribbons.",
+      "The quiet dignity you carry yourself with, even in crowded or noisy spaces.",
+      "How your jewelry always complements you perfectly without ever taking away from your face.",
+      "That you can go from completely relaxed and casual to looking like a magazine cover in seconds.",
+      "The way you walk with a natural rhythm and poise that draws the eye without demanding attention.",
+      "Your hands \u2014 the way you rest them on your cheek or hold your bag with effortless grace.",
+      "How the camera loves you, even in completely unposed, candid moments.",
+      "That subtle half-smile you give when you are amused but keeping your thoughts to yourself.",
+      "The way your eyes catch the sunlight and turn into warm honey.",
+      "Your natural glow that does not depend on filters or studio lighting.",
+      "How you wear bright colors like yellow and cobalt blue like they were invented just for you.",
+      "The softness of your features when you are listening intently to someone.",
+      "That you have a face people do not forget, no matter how brief the encounter.",
+      "Your sense of humor is quick, sharp, and always catches me pleasantly off guard.",
+      "The way you deliver a joke with a straight face before breaking into that warm laugh.",
+      "How talking to you never feels like small talk \u2014 even simple things feel meaningful.",
+      "Your playful sarcasm that keeps conversations lively and fun.",
+      "The fact that you do not pretend to laugh at things you do not find funny.",
+      "How you can make an ordinary afternoon feel like an event just by being part of the conversation.",
+      "Your witty comebacks that show just how fast your mind works.",
+      "The way you share little stories with natural charisma and timing.",
+      "How comfortable silence feels around you \u2014 there is no awkward rushing to fill the air.",
+      "That you remember small details people mentioned in passing.",
+      "The way you react to funny situations with that wide, uncontrollable grin.",
+      "How your voice has a steady, comforting rhythm to it.",
+      "The playful energy you bring when you are in a good mood.",
+      "That you can see through pretentiousness instantly.",
+      "How talking to you always leaves a lingering warmth long after the conversation ends.",
+      "You are unapologetically yourself in a world full of people copying each other.",
+      "How you never feel the need to perform for anyone \u2014 what they see is real.",
+      "Your quiet strength that shows up without making a loud scene.",
+      "Beneath your independent exterior, there is a deep and tender heart.",
+      "You care about people more than you like to let on.",
+      "The way you stand firm in your choices and decisions.",
+      "How you protect your peace and value genuine connections.",
+      "The honesty in your expressions \u2014 you can never completely hide what you are feeling.",
+      "You have a calm maturity that balances out your playful side.",
+      "That you do not need validation from strangers to know who you are.",
+      "The way you value respect and give it in return.",
+      "How you carry your own weight through challenges without complaining.",
+      "That you have layers to you, and each one is worth discovering with patience.",
+      "The way you make the people you care about feel seen and important.",
+      "Your resilience \u2014 you keep your grace even when things are difficult.",
+      "The way you tilt your head slightly when you are thinking about an answer.",
+      "How you glance to the side right before you laugh at something funny.",
+      "The way you adjust your sunglasses or push your hair back when the breeze hits.",
+      "That little pause you take before saying something clever.",
+      "How you can turn a simple sidewalk or rooftop into your personal runway.",
+      "The way your smile starts in your eyes a split second before your lips part.",
+      "How you look when you are fully absorbed in an activity you enjoy.",
+      "The relaxed way you lean back against a chair or balcony railing.",
+      "The way your expressions change so fluidly from thoughtful to playful.",
+      "How you notice little things in your surroundings that others walk right past.",
+      "The way you hold your phone when taking a selfie at golden hour.",
+      "How you make ordinary routines look charming and put together.",
+      "The way you smile with your mouth slightly open when something truly surprises you.",
+      "How your energy can shift the entire mood of an environment.",
+      "The genuine enthusiasm you have for things that bring you happiness.",
+      "Thinking about the way you looked against that city skyline at sunset.",
+      "How that yellow dress photo captured a moment of peace that felt timeless.",
+      "The sound of your real, unrestrained laugh that sticks in my head for days.",
+      "Remembering the calm confidence in your eyes when you look straight ahead.",
+      "The way that studio photo reminded me of just how gentle your spirit can be.",
+      "That moment on the balcony where the breeze caught your blue dress.",
+      "How your presence lingers in my thoughts long after you have moved on.",
+      "The realization that meeting you was one of the clearest highlights of this year.",
+      "How every single picture of you feels like a different chapter of the same beautiful story.",
+      "The way I catch myself re-reading your messages and smiling at your tone.",
+      "Knowing that behind every photo is a person with dreams, depth, and a whole world inside.",
+      "How rare it is to meet someone whose personality matches their physical beauty so completely.",
+      "The way you make ordinary moments feel like memories worth preserving.",
+      "That even from a distance, your impact on my day is unmistakable.",
+      "The simple truth that someone like you only comes around once in a lifetime.",
+      "You never asked to occupy so much space in my mind, but you do.",
+      "How you make me want to be more thoughtful, patient, and attentive.",
+      "The way you carry your independence with dignity and poise.",
+      "That you do not give your trust away cheaply, and that makes it worth earning.",
+      "The quiet comfort that comes from knowing you are in the world.",
+      "How you make someone feel lucky just to share a few minutes of your day.",
+      "The way your laughter feels like sunshine breaking through grey clouds.",
+      "That you are both soft-hearted and strong-minded in the best possible balance.",
+      "How you have a way of humbling someone without ever being cruel.",
+      "The way you inspire genuine respect from everyone who takes the time to know you.",
+      "That you are beautiful when you are completely dressed up, and just as beautiful when you are simple.",
+      "How you leave a lasting impression without trying to impress anyone.",
+      "The warmth of your spirit that shines through even your quietest moments.",
+      "That you are worth the patience, the space, and all the time in the world.",
+      "The way you remind me of what is genuinely good and real in life.",
+      "Your capacity to bring joy into a room without making a single demand.",
+      "How you look in natural outdoor light \u2014 completely at home with beauty.",
+      "The little spark of mischief that dances in your eyes when you tease someone.",
+      "How you keep your dignity intact no matter what the day throws at you.",
+      "The way your smile feels like an open invitation to be happy.",
+      "That you have a unique way of looking at situations that always offers a fresh perspective.",
+      "How your taste in music and style speaks to a rich inner life.",
+      "The way you can brighten up a dull afternoon with just a few words.",
+      "That you are true to your values and do not waver to fit in with crowds.",
+      "The natural grace in your posture, whether standing on a rooftop or sitting on steps.",
+      "How you make people want to be their most honest selves around you.",
+      "The warmth that radiates from your skin when the sun touches it.",
+      "That you are someone who deserves to be listened to, understood, and cherished.",
+      "The way you handle life with a mix of practical grit and gentle kindness.",
+      "How your presence feels like a breath of fresh air in a hurried world.",
+      "The way your eyelashes frame those warm brown eyes.",
+      "How your expression softens when you feel safe and comfortable.",
+      "The neatness and care you put into your braids and hairstyles.",
+      "The way you tilt your head back to catch the warmth of the sun.",
+      "That you are funny without ever needing to be mean-spirited.",
+      "How you carry your heritage and personal style with immense pride.",
+      "The way your laughter seems to start from deep within your chest.",
+      "How you make a simple selfie look like high art.",
+      "The quiet wisdom you share when you decide to speak your mind.",
+      "That you are not afraid of your own company.",
+      "The way you look when you are enjoying good food or good company.",
+      "How your eyes light up when you talk about something that genuinely excites you.",
+      "The grace with which you handle attention.",
+      "That you are someone worth showing up for, every single time.",
+      "The way you make ordinary places feel memorable just by standing in them.",
+      "If grace had a name and an address, it would look a lot like you on that balcony.",
+      "Some people walk into a room and blend in; you walk in and gently redefine the atmosphere.",
+      "There is a quiet rhythm to how you move through life that is soothing to witness.",
+      "Your smile does not just change your face \u2014 it changes the feeling of the whole day.",
+      "You are like that favorite song you hear once and spend the rest of the week searching for.",
+      "The honesty in your gaze is something rare in a world where everyone wears a mask.",
+      "You make confidence look easy, even though everyone knows it takes courage.",
+      "Every picture of you has a story, and every story makes you more intriguing.",
+      "The way you balance playful banter with genuine kindness is unmatched.",
+      "You are not just someone I admire; you are someone who leaves an indelible mark.",
+      "The quiet peace you project when you are sitting still on a sunny afternoon.",
+      "How your brown eyes hold an entire universe of unspoken thoughts and memories.",
+      "The way you carry your own sunshine wherever you go.",
+      "You make being yourself look like the most natural, desirable thing on earth.",
+      "The subtle warmth in your voice that lingers in memory long after you stop speaking.",
+      "You are more than enough, exactly as you are, on your best and hardest days.",
+      "Your feelings matter, your space matters, and your peace is worth protecting.",
+      "You deserve all the gentle things life has to offer.",
+      "The world is genuinely a warmer, brighter place with you in it.",
+      "You never need to change who you are to be worthy of deep appreciation.",
+      "Your beauty is not just what shows up on a camera; it is how you make others feel.",
+      "You have a strength inside you that has carried you through more than people know.",
+      "The care you put into the world does not go unnoticed.",
+      "You are worth the effort, the patience, and the highest respect.",
+      "Your smile is a gift that you give freely, and it never loses its value.",
+      "You are one of the few people who can be both deeply grounded and effortlessly radiant.",
+      "Every time you laugh for real, you give the people around you a reason to be glad.",
+      "You carry yourself with a royalty that does not need a crown.",
+      "There is nobody else with your exact blend of wit, warmth, and grace.",
+      "You are irreplaceable, unforgettable, and entirely Camille.",
+      "The way you looked on that hill at sunset, completely free in the breeze.",
+      "How you make a casual wrap dress look like haute couture.",
+      "The thoughtful way you listen when someone is speaking honestly to you.",
+      "The spark in your eye when you know you are right about something.",
+      "How you can make someone smile without even saying a single word.",
+      "The warmth of your laughter in a crowded room that cuts through all the noise.",
+      "The way you carry yourself like someone who knows their worth and refuses to settle.",
+      "How you bring a sense of style and color to everything you touch.",
+      "The calm way you hold your gaze when someone is speaking to you.",
+      "That you have a heart that feels deeply, even when you protect it carefully.",
+      "How your joy feels earned, real, and completely unfiltered.",
+      "The beauty of your unhurried stride when you are out enjoying the day.",
+      "The way the sunlight catches the gold jewelry against your skin.",
+      "That you are capable of holding your own in any conversation or setting.",
+      "How your presence feels like coming out of the cold into a warm room.",
+      "The quiet dignity you keep, no matter what happens around you.",
+      "The way you can turn a rainy or stressful day around with one genuine conversation.",
+      "How your smile stays in someone\u2019s mind for hours after you have said goodbye.",
+      "The sincerity with which you live your life and treat those who treat you well.",
+      "That you are a masterpiece in progress, and every chapter is stunning.",
+      "The soft texture of your braids and the way they frame your cheekbones.",
+      "The way you looked with that flower sticker in the studio \u2014 sweet, artistic, and happy.",
+      "How you can look completely regal in all-black and completely approachable in a yellow sundress.",
+      "The memory of that rooftop breeze moving through your dress while you turned to smile.",
+      "Your red-tipped nails resting against your face in that sunlit selfie.",
+      "The way you don\u2019t need to shout to make your presence felt.",
+      "How your humor is always rooted in keen observation of human nature.",
+      "The way you protect your friends and stand up for what you believe in.",
+      "That you take pride in looking good and feeling good on your own terms.",
+      "The warm tone of your laughter that feels like coming home.",
+      "How you can turn an ordinary photograph into a piece of art just by being in it.",
+      "The quiet grace of your posture when you think no one is watching.",
+      "The steady, calm patience you demonstrate when it counts.",
+      "The sparkle in your brown eyes that gives away your excitement.",
+      "How your style is always a true reflection of your mood and identity.",
+      "That you have a rare combination of intelligence, beauty, and emotional honesty.",
+      "The way you make someone feel appreciated without overcomplicating things.",
+      "How you move through the world with light on your shoulders and purpose in your step.",
+      "The unforgettable image of your genuine, unrestrained laughter under the open sky.",
+      "The simple, undeniable fact that Camille is someone I could never forget.",
+      "The way your voice softens when you talk about something close to your heart.",
+      "How you can make sitting in traffic or waiting in line feel like good company.",
+      "The way you hold eye contact with a calm, quiet confidence.",
+      "That you are both thoughtful in your words and playful in your spirit.",
+      "How you never let circumstances steal the warmth from your smile.",
+      "The way your presence can make an ordinary evening feel memorable.",
+      "That you don\u2019t pretend to have it all figured out, and that honesty is refreshing.",
+      "How the afternoon breeze on that terrace seemed to move just for you.",
+      "The quiet strength in your hands as you hold your purse and wait.",
+      "The way your laughter echoes in a room like music everyone wants to hear.",
+      "That you bring your own unique standard of beauty that cannot be duplicated.",
+      "How your thoughts are always deeper than what you choose to show on the surface.",
+      "The sweet way you look when you are pleasantly surprised by something simple.",
+      "The way you respect yourself and demand that same respect from the world.",
+      "And simply that having you in my life, even for a moment, is something I will always cherish."
+];
 
     /* --------------------------------------------------------------------------
        Dynamic Asset Resolver
@@ -2335,8 +2565,16 @@
        Audio Player Engine (Smooth Autoplay & State Synchronization)
        -------------------------------------------------------------------------- */
     const audio = document.getElementById('bgAudio');
+    // Loop repeat handler - guarantees uninterrupted repeating
+    audio.loop = true;
+    audio.addEventListener('ended', () => {
+      audio.currentTime = 0;
+      audio.play().catch(() => {});
+    });
+
     const playerPlayBtn = document.getElementById('playerPlayBtn');
-    const playIcon = document.getElementById('playIcon');
+    const svgPlay = document.getElementById('svgPlay');
+    const svgPause = document.getElementById('svgPause');
     const playerVinyl = document.getElementById('playerVinyl');
     const playerStatusText = document.getElementById('playerStatusText');
     const navAudioToggle = document.getElementById('navAudioToggle');
@@ -2351,13 +2589,17 @@
       if (playing) {
         playerVinyl.classList.add('playing');
         document.getElementById('floatingPlayer').classList.add('playing');
-        playIcon.textContent = '⏸';
+        // Show pause bars, hide play triangle
+        svgPlay.style.display = 'none';
+        svgPause.style.display = '';
         playerStatusText.textContent = 'Playing for you';
         navAudioLabel.textContent = 'Pause Music';
       } else {
         playerVinyl.classList.remove('playing');
         document.getElementById('floatingPlayer').classList.remove('playing');
-        playIcon.textContent = '▶';
+        // Show play triangle, hide pause bars
+        svgPlay.style.display = '';
+        svgPause.style.display = 'none';
         playerStatusText.textContent = 'Music paused';
         navAudioLabel.textContent = 'Play Music';
       }
