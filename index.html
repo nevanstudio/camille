@@ -1,0 +1,2707 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#090708">
+  <title>For Camille — A World Made For You</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       Design System & Variables
+       ========================================================================== */
+    :root {
+      --bg-dark: #080607;
+      --bg-surface: #120d0f;
+      --bg-card: rgba(24, 17, 20, 0.75);
+      --bg-card-hover: rgba(35, 23, 28, 0.9);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --card-border-glow: rgba(226, 75, 96, 0.35);
+      --fg-primary: #fdfbf9;
+      --fg-secondary: #c9c3c0;
+      --fg-muted: #8e8587;
+      --rose: #e24b60;
+      --rose-light: #f48b99;
+      --rose-glow: rgba(226, 75, 96, 0.25);
+      --wine: #48151f;
+      --wine-border: #63222e;
+      --gold: #dfb282;
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --radius-full: 9999px;
+      --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      --font-display: "Playfair Display", Georgia, serif;
+      --font-serif: "Cormorant Garamond", Georgia, serif;
+      --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+      --font-handwriting: "Caveat", cursive, sans-serif;
+      --safe-bottom: max(20px, env(safe-area-inset-bottom, 20px));
+    }
+
+    /* Reset & Base Setup */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg-dark);
+      color: var(--fg-primary);
+      font-family: var(--font-sans);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--fg-primary);
+      overflow-x: hidden;
+      position: relative;
+      min-height: 100vh;
+      line-height: 1.65;
+    }
+
+    /* Ambient Background Glow */
+    .ambient-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .ambient-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      background:
+        radial-gradient(circle at 15% 15%, rgba(120, 25, 42, 0.18), transparent 45%),
+        radial-gradient(circle at 85% 30%, rgba(189, 58, 76, 0.12), transparent 40%),
+        radial-gradient(circle at 50% 75%, rgba(65, 18, 28, 0.22), transparent 55%),
+        radial-gradient(circle at 80% 90%, rgba(95, 20, 35, 0.15), transparent 45%),
+        #080607;
+    }
+
+    /* Global Container */
+    .wrap {
+      width: min(1160px, calc(100% - clamp(24px, 5vw, 64px)));
+      margin-inline: auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Focus styling */
+    :focus-visible {
+      outline: 2px solid var(--rose);
+      outline-offset: 3px;
+    }
+
+    /* Selection */
+    ::selection {
+      background: var(--rose);
+      color: #fff;
+    }
+
+    /* ==========================================================================
+       Interactive Welcome Screen (Ensures Instant Music Autoplay)
+       ========================================================================== */
+    .welcome-curtain {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(7, 5, 6, 0.94);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+      transition: opacity 0.8s ease, visibility 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .welcome-curtain.hidden {
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(1.04);
+      pointer-events: none;
+    }
+
+    .curtain-card {
+      background: rgba(22, 15, 18, 0.85);
+      border: 1px solid rgba(226, 75, 96, 0.3);
+      padding: clamp(32px, 6vw, 56px) clamp(24px, 5vw, 44px);
+      border-radius: var(--radius-lg);
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.8), 0 0 40px rgba(226, 75, 96, 0.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .curtain-card::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(226, 75, 96, 0.12) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .curtain-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: var(--radius-full);
+      background: rgba(226, 75, 96, 0.12);
+      border: 1px solid rgba(226, 75, 96, 0.25);
+      color: var(--rose-light);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    .curtain-title {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 6vw, 46px);
+      font-weight: 600;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      color: #fff;
+    }
+
+    .curtain-title em {
+      font-style: italic;
+      color: var(--rose);
+      font-family: var(--font-serif);
+      font-weight: 400;
+    }
+
+    .curtain-desc {
+      color: var(--fg-secondary);
+      font-size: clamp(14px, 2vw, 16px);
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    .curtain-track-pill {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: rgba(10, 8, 9, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-full);
+      padding: 10px 18px;
+      margin-bottom: 28px;
+      font-size: 13px;
+      color: var(--fg-secondary);
+    }
+
+    .curtain-track-pill .music-icon {
+      color: var(--rose);
+      animation: pulse-soft 2s infinite ease-in-out;
+    }
+
+    .curtain-enter-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #e24b60, #bd2c42);
+      color: #fff;
+      border: none;
+      padding: 16px 28px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      box-shadow: 0 10px 30px rgba(226, 75, 96, 0.4);
+      transition: var(--transition-smooth);
+    }
+
+    .curtain-enter-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 40px rgba(226, 75, 96, 0.6);
+      filter: brightness(1.08);
+    }
+
+    .curtain-enter-btn:active {
+      transform: translateY(1px);
+    }
+
+    /* ==========================================================================
+       Top Navigation Bar (Chapter & Atmosphere Controller)
+       ========================================================================== */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 12px 0;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      background: rgba(8, 6, 7, 0.72);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      transition: var(--transition-smooth);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--fg-primary);
+      font-family: var(--font-display);
+      font-size: 19px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      flex-shrink: 0;
+    }
+
+    .brand-heart {
+      color: var(--rose);
+      font-size: 16px;
+      animation: heartbeat 2.2s infinite ease-in-out;
+    }
+
+    .brand span {
+      color: var(--rose-light);
+      font-family: var(--font-serif);
+      font-style: italic;
+    }
+
+    /* Chapter Navigation Links */
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding: 4px;
+      border-radius: var(--radius-full);
+      background: rgba(20, 14, 16, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-links::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-link {
+      color: var(--fg-muted);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      padding: 8px 14px;
+      border-radius: var(--radius-full);
+      white-space: nowrap;
+      transition: var(--transition-smooth);
+    }
+
+    .nav-link:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .nav-link.active {
+      color: #fff;
+      background: rgba(226, 75, 96, 0.22);
+      border: 1px solid rgba(226, 75, 96, 0.35);
+    }
+
+    /* Nav Action: Quick Audio Status */
+    .nav-audio-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(25, 17, 20, 0.8);
+      border: 1px solid rgba(226, 75, 96, 0.25);
+      color: var(--fg-primary);
+      padding: 7px 14px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      flex-shrink: 0;
+    }
+
+    .nav-audio-btn:hover {
+      background: rgba(38, 22, 28, 0.95);
+      border-color: var(--rose);
+      transform: translateY(-1px);
+    }
+
+    /* ==========================================================================
+       Hero Section — Chapter I: The Prelude
+       ========================================================================== */
+    .hero-section {
+      min-height: calc(90vh - 70px);
+      display: flex;
+      align-items: center;
+      padding: clamp(48px, 9vw, 100px) 0 clamp(40px, 6vw, 70px);
+      position: relative;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: clamp(32px, 5vw, 64px);
+      align-items: center;
+    }
+
+    .hero-content {
+      position: relative;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(226, 75, 96, 0.12);
+      border: 1px solid rgba(226, 75, 96, 0.28);
+      border-radius: var(--radius-full);
+      color: var(--rose-light);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(46px, 8.5vw, 98px);
+      font-weight: 600;
+      line-height: 1.02;
+      letter-spacing: -0.04em;
+      margin-bottom: 24px;
+      color: #fff;
+    }
+
+    .hero-title em {
+      display: inline-block;
+      font-family: var(--font-serif);
+      font-style: italic;
+      color: var(--rose);
+      font-weight: 400;
+      text-shadow: 0 0 35px rgba(226, 75, 96, 0.3);
+    }
+
+    .hero-lead {
+      color: var(--fg-secondary);
+      font-size: clamp(16px, 2.2vw, 20px);
+      line-height: 1.8;
+      max-width: 540px;
+      margin-bottom: 36px;
+      font-weight: 300;
+    }
+
+    .hero-lead strong {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #e24b60, #bd2c42);
+      color: #fff;
+      text-decoration: none;
+      padding: 14px 28px;
+      border-radius: var(--radius-full);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 25px rgba(226, 75, 96, 0.35);
+      transition: var(--transition-smooth);
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 35px rgba(226, 75, 96, 0.5);
+      filter: brightness(1.06);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--fg-primary);
+      text-decoration: none;
+      padding: 14px 26px;
+      border-radius: var(--radius-full);
+      font-size: 14px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: var(--transition-smooth);
+      cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
+    }
+
+    /* Hero Visual Card Stack */
+    .hero-visual {
+      position: relative;
+      display: flex;
+      justify-content: center;
+    }
+
+    .hero-portrait-frame {
+      position: relative;
+      width: min(380px, 100%);
+      aspect-ratio: 3/4;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 50px rgba(226, 75, 96, 0.2);
+      border: 1px solid rgba(226, 75, 96, 0.35);
+      background: #150e11;
+      transform: rotate(-1.5deg);
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .hero-portrait-frame:hover {
+      transform: rotate(0deg) scale(1.02);
+    }
+
+    .hero-portrait-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.8s ease;
+    }
+
+    .hero-portrait-frame:hover img {
+      transform: scale(1.05);
+    }
+
+    .portrait-badge-overlay {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      right: 16px;
+      background: rgba(12, 8, 10, 0.78);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      padding: 14px 18px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .badge-info h4 {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+
+    .badge-info p {
+      font-size: 12px;
+      color: var(--rose-light);
+      font-family: var(--font-handwriting);
+      font-size: 16px;
+    }
+
+    .badge-tag {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 4px 8px;
+      background: rgba(226, 75, 96, 0.2);
+      border-radius: var(--radius-sm);
+      color: #fff;
+    }
+
+    /* Floating ambient decorative cards */
+    .hero-floating-note {
+      position: absolute;
+      top: 10%;
+      right: -15px;
+      background: rgba(22, 14, 18, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 12px 18px;
+      border-radius: var(--radius-md);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+      transform: rotate(4deg);
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: float-gentle 4s infinite ease-in-out;
+    }
+
+    .hero-floating-note .note-icon {
+      color: var(--gold);
+      font-size: 18px;
+    }
+
+    .hero-floating-note span {
+      font-family: var(--font-handwriting);
+      font-size: 18px;
+      color: #fff;
+    }
+
+    /* ==========================================================================
+       Chapter II: Her Radiance & Beauty (Stories & Portraits)
+       ========================================================================== */
+    .section-spacing {
+      padding: clamp(70px, 10vw, 120px) 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      position: relative;
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 680px;
+      margin: 0 auto clamp(40px, 7vw, 70px);
+    }
+
+    .section-eyebrow {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--rose);
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(34px, 5.5vw, 58px);
+      font-weight: 500;
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+      color: #fff;
+      margin-bottom: 18px;
+    }
+
+    .section-title em {
+      font-family: var(--font-serif);
+      font-style: italic;
+      color: var(--rose-light);
+    }
+
+    .section-subtitle {
+      color: var(--fg-secondary);
+      font-size: clamp(15px, 2vw, 17px);
+      line-height: 1.75;
+    }
+
+    /* Story Card Layouts */
+    .story-card {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(30px, 6vw, 70px);
+      align-items: center;
+      margin-bottom: clamp(60px, 9vw, 100px);
+    }
+
+    .story-card.reverse {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .story-card.reverse .story-image-wrap {
+      order: 2;
+    }
+
+    .story-card.reverse .story-copy {
+      order: 1;
+    }
+
+    .story-image-wrap {
+      position: relative;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      aspect-ratio: 4/5;
+      background: #140d10;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+      cursor: zoom-in;
+    }
+
+    .story-image-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .story-image-wrap:hover img {
+      transform: scale(1.04);
+    }
+
+    .image-zoom-indicator {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(12, 8, 10, 0.65);
+      backdrop-filter: blur(8px);
+      color: #fff;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      opacity: 0;
+      transform: scale(0.8);
+      transition: var(--transition-smooth);
+    }
+
+    .story-image-wrap:hover .image-zoom-indicator {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .story-copy {
+      padding: clamp(10px, 3vw, 30px) 0;
+    }
+
+    .story-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--rose);
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+
+    .story-heading {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 500;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: #fff;
+      margin-bottom: 18px;
+    }
+
+    .story-text {
+      color: var(--fg-secondary);
+      font-size: clamp(15px, 1.8vw, 17px);
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+
+    .story-handwritten {
+      font-family: var(--font-handwriting);
+      font-size: clamp(20px, 2.5vw, 24px);
+      color: var(--gold);
+      line-height: 1.4;
+      display: block;
+    }
+
+    /* Dual Spotlight Grid for 2 photos */
+    .dual-spotlight {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(24px, 4vw, 40px);
+      margin-bottom: clamp(60px, 9vw, 100px);
+    }
+
+    .spotlight-card {
+      background: var(--bg-card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: var(--transition-smooth);
+    }
+
+    .spotlight-card:hover {
+      border-color: var(--card-border-glow);
+      transform: translateY(-4px);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    }
+
+    .spotlight-media {
+      position: relative;
+      aspect-ratio: 4/5;
+      overflow: hidden;
+      cursor: zoom-in;
+    }
+
+    .spotlight-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.7s ease;
+    }
+
+    .spotlight-card:hover .spotlight-media img {
+      transform: scale(1.04);
+    }
+
+    .spotlight-body {
+      padding: clamp(20px, 4vw, 28px);
+    }
+
+    .spotlight-tag {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--rose);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .spotlight-title {
+      font-family: var(--font-display);
+      font-size: clamp(20px, 3vw, 26px);
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    .spotlight-desc {
+      color: var(--fg-secondary);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    /* ==========================================================================
+       Chapter III: Her Personality & Soul
+       ========================================================================== */
+    .personality-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+      gap: 24px;
+      margin-bottom: 50px;
+    }
+
+    .trait-card {
+      background: var(--bg-card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: clamp(24px, 4vw, 32px);
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition-smooth);
+    }
+
+    .trait-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--rose), transparent);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .trait-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--card-border-glow);
+      transform: translateY(-4px);
+    }
+
+    .trait-card:hover::before {
+      opacity: 1;
+    }
+
+    .trait-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-sm);
+      background: rgba(226, 75, 96, 0.12);
+      border: 1px solid rgba(226, 75, 96, 0.25);
+      color: var(--rose-light);
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+
+    .trait-title {
+      font-family: var(--font-display);
+      font-size: 21px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .trait-text {
+      color: var(--fg-secondary);
+      font-size: 14.5px;
+      line-height: 1.75;
+    }
+
+    /* Interactive "Why Camille is Irreplaceable" Generator */
+    .reasons-box {
+      background: linear-gradient(135deg, rgba(35, 18, 25, 0.8), rgba(18, 12, 15, 0.9));
+      border: 1px solid rgba(226, 75, 96, 0.3);
+      border-radius: var(--radius-lg);
+      padding: clamp(30px, 6vw, 50px);
+      text-align: center;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .reasons-box h3 {
+      font-family: var(--font-display);
+      font-size: clamp(24px, 4vw, 36px);
+      margin-bottom: 14px;
+      color: #fff;
+    }
+
+    .reason-display {
+      min-height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 20px;
+      margin: 20px auto 26px;
+      max-width: 650px;
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: clamp(20px, 3.2vw, 28px);
+      color: var(--rose-light);
+      line-height: 1.5;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .reason-display.updating {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+
+    .btn-reason {
+      background: rgba(226, 75, 96, 0.15);
+      border: 1px solid var(--rose);
+      color: #fff;
+      padding: 12px 26px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: var(--transition-smooth);
+    }
+
+    .btn-reason:hover {
+      background: var(--rose);
+      box-shadow: 0 8px 25px rgba(226, 75, 96, 0.4);
+      transform: translateY(-2px);
+    }
+
+    /* ==========================================================================
+       Chapter IV: The Vulnerability & The Quote
+       "I hate the way you make me feel this hollow even though it's not your fault."
+       ========================================================================== */
+    .vulnerability-section {
+      padding: clamp(80px, 12vw, 140px) 0;
+      position: relative;
+      background: radial-gradient(ellipse at 50% 50%, rgba(55, 14, 23, 0.35) 0%, transparent 70%);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      text-align: center;
+    }
+
+    .vulnerability-container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 20px;
+      position: relative;
+    }
+
+    .quote-mark {
+      font-family: var(--font-serif);
+      font-size: clamp(60px, 12vw, 120px);
+      color: var(--rose);
+      opacity: 0.35;
+      line-height: 0.5;
+      margin-bottom: 20px;
+      user-select: none;
+    }
+
+    .vulnerable-quote {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 5.2vw, 54px);
+      font-weight: 500;
+      line-height: 1.25;
+      letter-spacing: -0.025em;
+      color: #fff;
+      margin-bottom: 28px;
+    }
+
+    .vulnerable-quote em {
+      font-family: var(--font-serif);
+      font-style: italic;
+      color: var(--rose-light);
+      font-weight: 400;
+    }
+
+    .vulnerable-reflection {
+      font-size: clamp(16px, 2vw, 19px);
+      line-height: 1.85;
+      color: var(--fg-secondary);
+      max-width: 640px;
+      margin: 0 auto 36px;
+      font-weight: 300;
+    }
+
+    .quote-author {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--fg-muted);
+      font-size: 13px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .quote-author::before, .quote-author::after {
+      content: "";
+      width: 30px;
+      height: 1px;
+      background: var(--wine-border);
+    }
+
+    /* ==========================================================================
+       Chapter V: The Camille Vault (All 11 Photos Interactive Gallery)
+       ========================================================================== */
+    .vault-controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 40px;
+    }
+
+    .vault-filter-btn {
+      background: rgba(22, 15, 18, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--fg-secondary);
+      padding: 9px 18px;
+      border-radius: var(--radius-full);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+    }
+
+    .vault-filter-btn:hover {
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .vault-filter-btn.active {
+      background: rgba(226, 75, 96, 0.2);
+      border-color: var(--rose);
+      color: #fff;
+    }
+
+    .vault-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+      gap: clamp(18px, 3vw, 28px);
+    }
+
+    /* Flip Card Container */
+    .gallery-card {
+      perspective: 1000px;
+      height: 380px;
+      cursor: pointer;
+    }
+
+    .gallery-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      transform-style: preserve-3d;
+      border-radius: var(--radius-md);
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.6);
+    }
+
+    .gallery-card.flipped .gallery-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    /* Front side of photo */
+    .card-front, .card-back {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+    }
+
+    .card-front {
+      background: #140d10;
+    }
+
+    .card-front img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s ease;
+    }
+
+    .gallery-card:hover .card-front img {
+      transform: scale(1.05);
+    }
+
+    .card-front-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(10, 6, 8, 0.9) 0%, rgba(10, 6, 8, 0.2) 40%, transparent 70%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 18px;
+      transition: opacity 0.3s ease;
+    }
+
+    .front-title {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .front-sub {
+      font-size: 12px;
+      color: var(--rose-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .flip-hint {
+      font-size: 11px;
+      color: var(--fg-muted);
+      opacity: 0.8;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+    }
+
+    /* Back side of card (Sticky / Letter note style) */
+    .card-back {
+      background: #fbf7f2;
+      color: #2b1f21;
+      transform: rotateY(180deg);
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 1px solid #dfd3c5;
+    }
+
+    .back-tape {
+      width: 50px;
+      height: 16px;
+      background: rgba(220, 195, 170, 0.5);
+      margin: 0 auto 12px;
+      border-radius: 2px;
+    }
+
+    .back-title {
+      font-family: var(--font-display);
+      font-size: 18px;
+      color: #3f1e24;
+      margin-bottom: 8px;
+    }
+
+    .back-note {
+      font-family: var(--font-handwriting);
+      font-size: 21px;
+      line-height: 1.45;
+      color: #3b282c;
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .back-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px dashed #d5c3b5;
+      padding-top: 12px;
+      font-size: 12px;
+      color: #7a6368;
+    }
+
+    .btn-view-full {
+      background: #3f1e24;
+      color: #fff;
+      border: none;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       Chapter VI: The Unopened Envelope & Letter from Nevan
+       ========================================================================== */
+    .letter-section {
+      text-align: center;
+      padding: clamp(70px, 10vw, 120px) 0 clamp(80px, 12vw, 140px);
+    }
+
+    .envelope-showcase {
+      width: min(380px, 100%);
+      margin: 0 auto;
+      perspective: 1200px;
+    }
+
+    .envelope-3d {
+      position: relative;
+      width: 100%;
+      height: 240px;
+      background: #1c1013;
+      border: 1px solid #4a2128;
+      border-radius: 6px;
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.85), 0 0 40px rgba(226, 75, 96, 0.15);
+      cursor: pointer;
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .envelope-3d:hover {
+      transform: translateY(-6px) scale(1.02);
+    }
+
+    /* Envelope folds with CSS clip-paths */
+    .env-flap {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #2a151b, #150a0d);
+      clip-path: polygon(0 0, 50% 55%, 100% 0);
+      z-index: 5;
+      transform-origin: top;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .envelope-3d.open-flap .env-flap {
+      transform: rotateX(180deg);
+      z-index: 1;
+    }
+
+    .env-left {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(45deg, #200f13, #150a0d);
+      clip-path: polygon(0 0, 50% 55%, 0 100%);
+      z-index: 3;
+    }
+
+    .env-right {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #1b0d10, #13090b);
+      clip-path: polygon(100% 0, 50% 55%, 100% 100%);
+      z-index: 3;
+    }
+
+    .env-bottom {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(0deg, #261217, #190c10);
+      clip-path: polygon(0 100%, 50% 55%, 100% 100%);
+      z-index: 4;
+    }
+
+    .env-seal {
+      position: absolute;
+      top: 55%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 48px;
+      height: 48px;
+      background: radial-gradient(circle at 35% 35%, #e24b60, #932434);
+      color: #fff;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      z-index: 6;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6), 0 0 15px rgba(226, 75, 96, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      transition: transform 0.4s ease;
+    }
+
+    .envelope-3d:hover .env-seal {
+      transform: translate(-50%, -50%) scale(1.12);
+    }
+
+    .open-letter-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 32px;
+      background: rgba(226, 75, 96, 0.15);
+      color: #fff;
+      border: 1px solid rgba(226, 75, 96, 0.4);
+      padding: 14px 32px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+    }
+
+    .open-letter-trigger:hover {
+      background: var(--rose);
+      box-shadow: 0 10px 30px rgba(226, 75, 96, 0.5);
+      transform: translateY(-2px);
+    }
+
+    /* ==========================================================================
+       Letter Modal Dialog
+       ========================================================================== */
+    .letter-dialog {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(5, 3, 4, 0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(16px, 4vw, 36px);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .letter-dialog.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .letter-paper {
+      background: #fbf7f2;
+      color: #24181a;
+      width: min(600px, 100%);
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: clamp(32px, 6vw, 60px) clamp(24px, 5vw, 48px);
+      border-radius: var(--radius-sm);
+      box-shadow: 0 30px 100px rgba(0, 0, 0, 0.9), 0 0 40px rgba(226, 75, 96, 0.15);
+      position: relative;
+      animation: unfold-letter 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      border: 1px solid #e5d8cb;
+    }
+
+    .letter-paper::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .letter-paper::-webkit-scrollbar-thumb {
+      background: #cfbeaf;
+      border-radius: 3px;
+    }
+
+    .letter-stamp {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      width: 44px;
+      height: 52px;
+      border: 1px dashed #bba496;
+      border-radius: 3px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--rose);
+      font-size: 14px;
+    }
+
+    .letter-stamp span {
+      font-size: 9px;
+      color: #937f74;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 2px;
+    }
+
+    .letter-header {
+      font-family: var(--font-display);
+      font-size: clamp(26px, 4vw, 36px);
+      font-style: italic;
+      color: #3b1921;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #ebdcd0;
+    }
+
+    .letter-body {
+      font-size: clamp(15px, 2vw, 16.5px);
+      line-height: 1.85;
+      color: #3b2c30;
+    }
+
+    .letter-body p {
+      margin-bottom: 18px;
+    }
+
+    .letter-signature {
+      font-family: var(--font-handwriting);
+      font-size: clamp(28px, 4.5vw, 38px);
+      color: #982a39;
+      margin-top: 30px;
+    }
+
+    .letter-close-btn {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #ebdcd0;
+      border: none;
+      color: #493035;
+      font-size: 18px;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: var(--transition-smooth);
+    }
+
+    .letter-close-btn:hover {
+      background: var(--rose);
+      color: #fff;
+    }
+
+    /* ==========================================================================
+       Cinematic Lightbox Modal
+       ========================================================================== */
+    .lightbox-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      background: rgba(4, 2, 3, 0.96);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(16px, 4vw, 30px);
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+
+    .lightbox-modal.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .lightbox-container {
+      position: relative;
+      max-width: 90vw;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .lightbox-container img {
+      max-width: 100%;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: var(--radius-sm);
+      box-shadow: 0 20px 80px rgba(0, 0, 0, 0.9), 0 0 40px rgba(226, 75, 96, 0.2);
+    }
+
+    .lightbox-caption {
+      margin-top: 16px;
+      color: var(--fg-secondary);
+      font-family: var(--font-display);
+      font-size: clamp(14px, 2vw, 17px);
+      text-align: center;
+      max-width: 600px;
+    }
+
+    .lightbox-close-btn {
+      position: absolute;
+      top: -46px;
+      right: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      font-size: 20px;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: var(--transition-smooth);
+    }
+
+    .lightbox-close-btn:hover {
+      background: var(--rose);
+      transform: scale(1.08);
+    }
+
+    .lightbox-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(20, 14, 17, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      font-size: 22px;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: var(--transition-smooth);
+    }
+
+    .lightbox-nav-btn:hover {
+      background: var(--rose);
+      border-color: var(--rose);
+    }
+
+    .lightbox-nav-prev {
+      left: clamp(10px, 3vw, 24px);
+    }
+
+    .lightbox-nav-next {
+      right: clamp(10px, 3vw, 24px);
+    }
+
+    /* ==========================================================================
+       Persistent Floating Music Player
+       ========================================================================== */
+    .floating-player {
+      position: fixed;
+      bottom: var(--safe-bottom);
+      right: clamp(16px, 3vw, 32px);
+      z-index: 95;
+      background: rgba(22, 14, 18, 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(226, 75, 96, 0.35);
+      border-radius: var(--radius-full);
+      padding: 8px 18px 8px 10px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7), 0 0 30px rgba(226, 75, 96, 0.2);
+      transition: var(--transition-smooth);
+    }
+
+    .floating-player:hover {
+      border-color: var(--rose);
+      transform: translateY(-2px);
+    }
+
+    /* Vinyl disc cover animation */
+    .player-vinyl {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #2d181e 25%, #080507 26%, #1e1115 60%, #0c080a 100%);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      display: grid;
+      place-items: center;
+      position: relative;
+      animation: spin 6s linear infinite;
+      animation-play-state: paused;
+      flex-shrink: 0;
+    }
+
+    .player-vinyl.playing {
+      animation-play-state: running;
+    }
+
+    .vinyl-center {
+      width: 14px;
+      height: 14px;
+      background: var(--rose);
+      border-radius: 50%;
+      border: 2px solid #fff;
+    }
+
+    .player-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 130px;
+    }
+
+    .player-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    .player-status {
+      font-size: 11px;
+      color: var(--rose-light);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Equalizer Bars */
+    .equalizer {
+      display: flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 12px;
+    }
+
+    .eq-bar {
+      width: 3px;
+      background: var(--rose);
+      border-radius: 1px;
+      height: 4px;
+      transition: height 0.2s ease;
+    }
+
+    .playing .eq-bar:nth-child(1) { animation: eq 0.8s ease-in-out infinite alternate; }
+    .playing .eq-bar:nth-child(2) { animation: eq 1.1s ease-in-out infinite alternate 0.2s; }
+    .playing .eq-bar:nth-child(3) { animation: eq 0.7s ease-in-out infinite alternate 0.4s; }
+    .playing .eq-bar:nth-child(4) { animation: eq 0.9s ease-in-out infinite alternate 0.1s; }
+
+    .player-play-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--rose);
+      border: none;
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(226, 75, 96, 0.4);
+      transition: var(--transition-smooth);
+      flex-shrink: 0;
+    }
+
+    .player-play-btn:hover {
+      transform: scale(1.08);
+      filter: brightness(1.1);
+    }
+
+    /* ==========================================================================
+       Footer
+       ========================================================================== */
+    .footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding: clamp(40px, 6vw, 60px) 0 calc(var(--safe-bottom) + 50px);
+      text-align: center;
+      position: relative;
+      z-index: 10;
+    }
+
+    .footer-brand {
+      font-family: var(--font-display);
+      font-size: 22px;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .footer-brand em {
+      font-family: var(--font-serif);
+      font-style: italic;
+      color: var(--rose);
+    }
+
+    .footer-text {
+      color: var(--fg-muted);
+      font-size: 13px;
+    }
+
+    .footer-text span {
+      color: var(--rose);
+    }
+
+    /* ==========================================================================
+       Animations & Keyframes
+       ========================================================================== */
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      14% { transform: scale(1.22); }
+      28% { transform: scale(1); }
+      42% { transform: scale(1.15); }
+      70% { transform: scale(1); }
+    }
+
+    @keyframes pulse-soft {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.12); }
+    }
+
+    @keyframes float-gentle {
+      0%, 100% { transform: translateY(0) rotate(4deg); }
+      50% { transform: translateY(-8px) rotate(2deg); }
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes eq {
+      0% { height: 3px; }
+      100% { height: 12px; }
+    }
+
+    @keyframes unfold-letter {
+      from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* Scroll Reveal helper */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ==========================================================================
+       Responsive Media Queries
+       Clean layouts & Spacing for ALL devices. Absolutely NO overlaps!
+       ========================================================================== */
+    @media (max-width: 900px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 40px;
+      }
+
+      .hero-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .hero-lead {
+        margin-inline: auto;
+      }
+
+      .hero-actions {
+        justify-content: center;
+      }
+
+      .story-card, .story-card.reverse {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+
+      .story-card.reverse .story-image-wrap {
+        order: initial;
+      }
+
+      .story-card.reverse .story-copy {
+        order: initial;
+      }
+
+      .dual-spotlight {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .nav-links {
+        display: none; /* Keep top clean on small screens; player and jump links take over */
+      }
+
+      .floating-player {
+        right: 16px;
+        left: 16px;
+        justify-content: space-between;
+        border-radius: var(--radius-md);
+        padding: 8px 14px;
+      }
+
+      .player-info {
+        min-width: auto;
+        overflow: hidden;
+      }
+
+      .player-title {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 140px;
+      }
+
+      .gallery-card {
+        height: 350px;
+      }
+
+      .envelope-3d {
+        height: 200px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Animated Star Dust Canvas -->
+  <canvas id="starCanvas" class="ambient-canvas" aria-hidden="true"></canvas>
+  <div class="ambient-bg" aria-hidden="true"></div>
+
+  <!-- Audio Element (Give Me Your Forever) -->
+  <audio id="bgAudio" loop preload="auto">
+    <source src="./Give Me Your Forever.mp3" type="audio/mpeg">
+    <source src="Give Me Your Forever.mp3" type="audio/mpeg">
+    <source src="https://raw.githubusercontent.com/nevanstudio/camille/main/Give%20Me%20Your%20Forever.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- ==========================================================================
+       Interactive Welcome Screen
+       Ensures browser autoplay policy compliance and instant immersive music
+       ========================================================================== -->
+  <aside class="welcome-curtain" id="welcomeCurtain" role="dialog" aria-modal="true" aria-label="Welcome">
+    <div class="curtain-card">
+      <div class="curtain-badge">Dedicated to Camille ✦</div>
+      <h1 class="curtain-title">A World For <em>Camille.</em></h1>
+      <p class="curtain-desc">
+        I built this little universe just for you—to celebrate your beauty, your spirit, and everything that makes you unforgettable.
+      </p>
+
+      <div class="curtain-track-pill">
+        <span class="music-icon">♫</span>
+        <span>Soundtrack: <strong>Give Me Your Forever</strong></span>
+      </div>
+
+      <button class="curtain-enter-btn" id="enterBtn" aria-label="Enter website with music">
+        <span>Open Experience</span>
+        <span aria-hidden="true">→</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ==========================================================================
+       Top Navigation Bar
+       ========================================================================== -->
+  <header class="top-nav">
+    <div class="wrap nav-inner">
+      <a href="#hero" class="brand" aria-label="Camille home">
+        <span>For</span> Camille <span class="brand-heart">♥</span>
+      </a>
+
+      <!-- Chapter Nav Pills -->
+      <nav class="nav-links" aria-label="Experience chapters">
+        <a href="#hero" class="nav-link active">Prelude</a>
+        <a href="#radiance" class="nav-link">Radiance</a>
+        <a href="#essence" class="nav-link">Her Essence</a>
+        <a href="#vulnerability" class="nav-link">The Feeling</a>
+        <a href="#vault" class="nav-link">The Vault (11)</a>
+        <a href="#letter" class="nav-link">A Letter</a>
+      </nav>
+
+      <!-- Music status toggle in header -->
+      <button class="nav-audio-btn" id="navAudioToggle" aria-label="Toggle background music">
+        <span class="nav-audio-icon">♫</span>
+        <span id="navAudioLabel">Play Music</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       Main Content
+       ========================================================================== -->
+  <main>
+
+    <!-- CHAPTER I: THE PRELUDE (Hero Section) -->
+    <section class="hero-section wrap reveal" id="hero">
+      <div class="hero-grid">
+        <div class="hero-content">
+          <div class="hero-badge">A timeless tribute</div>
+          <h1 class="hero-title">
+            Hey,<br>
+            <em>Camille.</em>
+          </h1>
+          <p class="hero-lead">
+            I wanted to make you feel truly special—not just for a day, but whenever you need a reminder of <strong>how breathtaking, rare, and deeply appreciated you are.</strong>
+          </p>
+          <div class="hero-actions">
+            <a href="#radiance" class="btn-primary">
+              <span>Begin The Journey</span>
+              <span aria-hidden="true">↓</span>
+            </a>
+            <a href="#letter" class="btn-secondary">
+              <span>Read The Letter</span>
+              <span aria-hidden="true">✉</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="hero-portrait-frame">
+            <img src="./camille/IMG-20260228-WA0131.jpg" 
+                 alt="Camille captivating eyes" 
+                 loading="eager"
+                 onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/nevanstudio/camille/main/camille/IMG-20260228-WA0131.jpg';">
+            <div class="portrait-badge-overlay">
+              <div class="badge-info">
+                <h4>Camille</h4>
+                <p>Those eyes that speak louder than words</p>
+              </div>
+              <span class="badge-tag">Portrait I</span>
+            </div>
+          </div>
+          <div class="hero-floating-note">
+            <span class="note-icon">✦</span>
+            <span>You're one in a million</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHAPTER II: HER RADIANCE & BEAUTY -->
+    <section class="section-spacing wrap" id="radiance">
+      <div class="section-header reveal">
+        <span class="section-eyebrow">Chapter II — Her Beauty</span>
+        <h2 class="section-title">A Beauty That <em>Stops Time.</em></h2>
+        <p class="section-subtitle">
+          It isn't just about how stunning you look in every picture—it's the natural grace and quiet light you carry with you.
+        </p>
+      </div>
+
+      <!-- Story Highlight 1 (IMG-20260228-WA0131) -->
+      <article class="story-card reveal">
+        <div class="story-image-wrap" data-img-idx="0">
+          <img src="./camille/IMG-20260228-WA0131.jpg" 
+               alt="Camille deep brown eyes" 
+               loading="lazy"
+               onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/nevanstudio/camille/main/camille/IMG-20260228-WA0131.jpg';">
+          <div class="image-zoom-indicator">⚲</div>
+        </div>
+        <div class="story-copy">
+          <div class="story-badge">Those Eyes 👀</div>
+          <h3 class="story-heading">The gaze that gets me every single time.</h3>
+          <p class="story-text">
+            There is something undeniably striking about your eyes. They are deep, warm, and observant—the kind of eyes that make the entire room fade into the background.
+          </p>
+          <span class="story-handwritten">"Honestly, they disarm me without even trying."</span>
+        </div>
+      </article>
+
+      <!-- Story Highlight 2 (IMG-20260328-WA0123) -->
+      <article class="story-card reverse reveal">
+        <div class="story-image-wrap" data-img-idx="2">
+          <img src="./camille/IMG-20260328-WA0123.jpg" 
+               alt="Camille radiant smile" 
+               loading="lazy"
+               onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/nevanstudio/camille/main/camille/IMG-20260328-WA0123.jpg';">
+          <div class="image-zoom-indicator">⚲</div>
+        </div>
+        <div class="story-copy">
+          <div class="story-badge">That Smile ✧</div>
+          <h3 class="story-heading">The smile I fell for.</h3>
+          <p class="story-text">
+            Your smile has this effortless warmth that stays with someone long after the moment is gone. It brings comfort, it radiates pure sunshine, and it's one of those sights I could never get tired of seeing.
+          </p>
+          <span class="story-handwritten">"A smile that turns any heavy day completely around."</span>
+        </div>
+      </article>
+
+      <!-- Dual Spotlight Grid: IMG-20260228-WA0134 & IMG-20260427-WA0027 -->
+      <div class="dual-spotlight reveal">
+        <div class="spotlight-card">
+          <div class="spotlight-media" data-img-idx="1">
+            <img src="./camille/IMG-20260228-WA0134.jpg" 
+                 alt="Camille quiet elegance" 
+                 loading="lazy"
+                 onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/nevanstudio/camille/main/camille/IMG-20260228-WA0134.jpg';">
+            <div class="image-zoom-indicator">⚲</div>
+          </div>
+          <div class="spotlight-body">
+            <div class="spotlight-tag">Unfiltered Grace</div>
+            <h4 class="spotlight-title">Quiet Wonder</h4>
+            <p class="spotlight-desc">
+              Unposed and honest. You don't need fancy angles or filters; your natural presence is magnetic on its own.
+            </p>
+          </div>
+        </div>
+
+        <div class="spotlight-card">
+          <div class="spotlight-media" data-img-idx="3">
+            <img src="./camille/IMG-20260427-WA0027.jpg" 
+                 alt="Camille radiant golden light" 
+                 loading="lazy"
+                 onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/nevanstudio/camille/main/camille/IMG-20260427-WA0027.jpg';">
+            <div class="image-zoom-indicator">⚲</div>
+          </div>
+          <div class="spotlight-body">
+            <div class="spotlight-tag">Golden Hour</div>
+            <h4 class="spotlight-title">Effortless Radiance</h4>
+            <p class="spotlight-desc">
+              The warmth in this photo reminds me of how vibrant your energy is when you're just enjoying life.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHAPTER III: HER PERSONALITY & SOUL -->
+    <section class="section-spacing wrap" id="essence">
+      <div class="section-header reveal">
+        <span class="section-eyebrow">Chapter III — Her Personality</span>
+        <h2 class="section-title">And Your <em>Personality…</em></h2>
+        <p class="section-subtitle">
+          The one I always talk about. You are funny, sharp, genuine, and so much more than you give yourself credit for.
+        </p>
+      </div>
+
+      <div class="personality-grid reveal">
+        <div class="trait-card">
+          <div class="trait-icon">✦</div>
+          <h3 class="trait-title">Unapologetically You</h3>
+          <p class="trait-text">
+            In a world where so many people pretend to be someone else, you remain genuine, honest, and completely yourself. That authenticity is rare.
+          </p>
+        </div>
+
+        <div class="trait-card">
+          <div class="trait-icon">☼</div>
+          <h3 class="trait-title">That Contagious Laugh</h3>
+          <p class="trait-text">
+            When you laugh for real, it's impossible not to smile. Your humor and your witty comebacks make talking to you the easiest thing in the world.
+          </p>
+        </div>
+
+        <div class="trait-card">
+          <div class="trait-icon">❦</div>
+          <h3 class="trait-title">A Gentle, Deep Heart</h3>
+          <p class="trait-text">
+            Beneath your playful sarcasm and strong shell, there is a thoughtful, caring person who feels things deeply. That heart is precious.
+          </p>
+        </div>
+      </div>
+
+      <!-- Interactive Reason Generator -->
+      <div class="reasons-box reveal">
+        <h3>Little Things That Make You Irreplaceable</h3>
+        <p style="color: var(--fg-secondary); font-size: 14px;">Tap below whenever you need a sweet reminder</p>
+        <div class="reason-display" id="reasonDisplay">
+          "The way you make ordinary conversations feel like the best part of the day."
+        </div>
+        <button class="btn-reason" id="nextReasonBtn" aria-label="Reveal another reason">
+          <span>Reveal Another Reason</span>
+          <span aria-hidden="true">✨</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- CHAPTER IV: THE FEELING & VULNERABILITY -->
+    <section class="vulnerability-section reveal" id="vulnerability">
+      <div class="vulnerability-container">
+        <div class="quote-mark" aria-hidden="true">“</div>
+        <blockquote class="vulnerable-quote">
+          I hate the way you make me feel <em>this hollow</em> even though it's not your fault.
+        </blockquote>
+        <p class="vulnerable-reflection">
+          Because when there's silence between us, the world feels noticeably emptier. You never asked to carry that kind of power over my thoughts, but you do. Missing you isn't something I planned, but caring about you this deeply has never been a choice.
+        </p>
+        <div class="quote-author">Nevan's Heart</div>
+      </div>
+    </section>
+
+    <!-- CHAPTER V: THE CAMILLE VAULT (All 11 Photos Interactive Experience) -->
+    <section class="section-spacing wrap" id="vault">
+      <div class="section-header reveal">
+        <span class="section-eyebrow">Chapter V — The Memory Vault</span>
+        <h2 class="section-title">All <em>11 Portraits</em> of You.</h2>
+        <p class="section-subtitle">
+          Every photo tells a piece of your story. Tap any card to flip it over for a handwritten note, or click to view full resolution.
+        </p>
+      </div>
+
+      <!-- Filter Categories -->
+      <div class="vault-controls reveal">
+        <button class="vault-filter-btn active" data-filter="all">All Moments (11)</button>
+        <button class="vault-filter-btn" data-filter="eyes">Eyes & Smile</button>
+        <button class="vault-filter-btn" data-filter="candid">Candid Spirit</button>
+        <button class="vault-filter-btn" data-filter="elegance">Pure Elegance</button>
+      </div>
+
+      <!-- 11 Photos Grid with Flip Functionality -->
+      <div class="vault-grid reveal" id="vaultGrid">
+        <!-- Rendered dynamically via JavaScript so all 11 photos have notes & high-res zoom -->
+      </div>
+    </section>
+
+    <!-- CHAPTER VI: THE UNOPENED ENVELOPE -->
+    <section class="letter-section wrap reveal" id="letter">
+      <div class="section-header">
+        <span class="section-eyebrow">Chapter VI — From Nevan</span>
+        <h2 class="section-title">An Unspoken <em>Letter.</em></h2>
+        <p class="section-subtitle">
+          I wrote down the words that matter most. When you're ready, tap the wax seal to open it.
+        </p>
+      </div>
+
+      <div class="envelope-showcase">
+        <div class="envelope-3d" id="envelopeTrigger" role="button" tabindex="0" aria-label="Open letter from Nevan">
+          <div class="env-flap"></div>
+          <div class="env-left"></div>
+          <div class="env-right"></div>
+          <div class="env-bottom"></div>
+          <div class="env-seal" aria-hidden="true">♥</div>
+        </div>
+        <button class="open-letter-trigger" id="openLetterBtn">
+          <span>Break the seal & Open letter</span>
+          <span aria-hidden="true">✉</span>
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==========================================================================
+       Letter Modal Dialog
+       ========================================================================== -->
+  <div class="letter-dialog" id="letterModal" role="dialog" aria-modal="true" aria-label="Letter for Camille">
+    <article class="letter-paper">
+      <button class="letter-close-btn" id="closeLetterBtn" aria-label="Close letter">×</button>
+      <div class="letter-stamp" aria-hidden="true">
+        ♥
+        <span>FOR YOU</span>
+      </div>
+      <h2 class="letter-header">Hey Camille,</h2>
+      <div class="letter-body">
+        <p>
+          I'm sorry for what happened. I've realized I was pushing things a little too hard, and I don't wanna rush anything. The last thing I ever want is for you to feel like your feelings don't matter to me.
+        </p>
+        <p>
+          I'll do better, Camille. I promise I'll respect your decisions and your choices. I want you to be happy. You do mean a lot to me, and like I told you before, I've had feelings for you for a long time. That's true, and I don't wanna mess anything up.
+        </p>
+        <p>
+          I care about you a lot. It's hard when someone I care about so much is upset with me and doesn't wanna talk, but I know that doesn't mean I should push. I should give you the space you need, and I will.
+        </p>
+        <p>
+          I'm sorry. Take all the time you need. You don't owe me a response.
+        </p>
+      </div>
+      <div class="letter-signature">— Nevan</div>
+    </article>
+  </div>
+
+  <!-- ==========================================================================
+       Cinematic Fullscreen Lightbox
+       ========================================================================== -->
+  <div class="lightbox-modal" id="lightboxModal" role="dialog" aria-modal="true" aria-label="Photo Preview">
+    <button class="lightbox-close-btn" id="closeLightboxBtn" aria-label="Close preview">×</button>
+    <button class="lightbox-nav-btn lightbox-nav-prev" id="prevPhotoBtn" aria-label="Previous photo">‹</button>
+    <button class="lightbox-nav-btn lightbox-nav-next" id="nextPhotoBtn" aria-label="Next photo">›</button>
+    <div class="lightbox-container">
+      <img id="lightboxImg" src="" alt="Camille in high resolution">
+      <div class="lightbox-caption" id="lightboxCaption"></div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       Floating Luxury Music Player
+       ========================================================================== -->
+  <aside class="floating-player" id="floatingPlayer" aria-label="Music player">
+    <div class="player-vinyl" id="playerVinyl">
+      <div class="vinyl-center"></div>
+    </div>
+    <div class="player-info">
+      <span class="player-title">Give Me Your Forever</span>
+      <span class="player-status" id="playerStatus">
+        <span class="equalizer" id="equalizer">
+          <span class="eq-bar"></span>
+          <span class="eq-bar"></span>
+          <span class="eq-bar"></span>
+          <span class="eq-bar"></span>
+        </span>
+        <span id="playerStatusText">Playing for you</span>
+      </span>
+    </div>
+    <button class="player-play-btn" id="playerPlayBtn" aria-label="Play or pause soundtrack">
+      <span id="playIcon">⏸</span>
+    </button>
+  </aside>
+
+  <!-- ==========================================================================
+       Footer
+       ========================================================================== -->
+  <footer class="footer wrap">
+    <div class="footer-brand">Made with care for <em>Camille</em></div>
+    <p class="footer-text">Always hoping to put a genuine smile on your face <span>♥</span></p>
+  </footer>
+
+  <!-- ==========================================================================
+       Client JavaScript Engine
+       ========================================================================== -->
+  <script>
+    /* --------------------------------------------------------------------------
+       All 11 Photos Data Matrix
+       -------------------------------------------------------------------------- */
+    const PHOTOS = [
+      {
+        file: "IMG-20260228-WA0131.jpg",
+        title: "Captivating Gaze",
+        category: "eyes",
+        date: "Feb 28, 2026",
+        note: "Those eyes will forever have my full attention. There is so much unspoken depth in your look."
+      },
+      {
+        file: "IMG-20260228-WA0134.jpg",
+        title: "Soft Composure",
+        category: "elegance",
+        date: "Feb 28, 2026",
+        note: "Completely natural, unposed and beautiful. You are effortlessly yourself."
+      },
+      {
+        file: "IMG-20260328-WA0123.jpg",
+        title: "The Infectious Smile",
+        category: "eyes",
+        date: "March 28, 2026",
+        note: "This smile has gotten me through long days. It's the kind of joy that lights up everything around it."
+      },
+      {
+        file: "IMG-20260427-WA0027.jpg",
+        title: "Golden Aura",
+        category: "elegance",
+        date: "April 27, 2026",
+        note: "The light in this picture is stunning, but honestly, it’s just highlighting the glow you already have."
+      },
+      {
+        file: "IMG-20260427-WA0089.jpg",
+        title: "Simply You",
+        category: "candid",
+        date: "April 27, 2026",
+        note: "Just Camille being Camille. Grounded, real, and wonderfully one-of-a-kind."
+      },
+      {
+        file: "IMG-20260706-WA0026.jpg",
+        title: "Summer Sweetness",
+        category: "candid",
+        date: "July 6, 2026",
+        note: "A quiet summer moment. I love how genuine your expressions always are."
+      },
+      {
+        file: "IMG-20261011-WA0042.jpg",
+        title: "Autumn Radiance",
+        category: "elegance",
+        date: "Oct 11, 2026",
+        note: "Your poise and elegance here is unmatched. You carry yourself with such quiet strength."
+      },
+      {
+        file: "IMG-20261011-WA0077.jpg",
+        title: "Playful Spark",
+        category: "candid",
+        date: "Oct 11, 2026",
+        note: "That cheeky, funny expression! Your sense of humor is easily one of my favorite things about you."
+      },
+      {
+        file: "IMG-20261026-WA0056.jpg",
+        title: "Striking Presence",
+        category: "elegance",
+        date: "Oct 26, 2026",
+        note: "Breathtaking. Some people just naturally command grace, and you are definitely one of them."
+      },
+      {
+        file: "IMG-20261026-WA0068.jpg",
+        title: "Gentle Moments",
+        category: "candid",
+        date: "Oct 26, 2026",
+        note: "Soft and peaceful. Reminds me that behind everything, you have such a gentle heart."
+      },
+      {
+        file: "IMG-20261113-WA0076.jpg",
+        title: "Timeless Charm",
+        category: "eyes",
+        date: "Nov 13, 2026",
+        note: "The most recent memory, looking as angelic as ever. You truly never lose your magic."
+      }
+    ];
+
+    const REASONS = [
+      "The way you make ordinary conversations feel like the best part of the day.",
+      "How genuine and unapologetic you are about who you are.",
+      "That contagious laugh that immediately lifts the mood of anyone nearby.",
+      "Your sharp wit and the playful banter you always bring.",
+      "Those deep brown eyes that make everything else fade away.",
+      "The way you care about things deeply, even when you try to act nonchalant.",
+      "Your incredible taste and the effortless way you carry yourself.",
+      "How talking to you feels natural and safe, like coming home.",
+      "Because you are Camille—and there has never been anyone quite like you."
+    ];
+
+    /* --------------------------------------------------------------------------
+       Dynamic Asset Resolver
+       -------------------------------------------------------------------------- */
+    function resolveImgPath(filename) {
+      return `./camille/${filename}`;
+    }
+
+    function resolveRemoteFallback(filename) {
+      return `https://raw.githubusercontent.com/nevanstudio/camille/main/camille/${filename}`;
+    }
+
+    /* --------------------------------------------------------------------------
+       Audio Player Engine (Smooth Autoplay & State Synchronization)
+       -------------------------------------------------------------------------- */
+    const audio = document.getElementById('bgAudio');
+    const playerPlayBtn = document.getElementById('playerPlayBtn');
+    const playIcon = document.getElementById('playIcon');
+    const playerVinyl = document.getElementById('playerVinyl');
+    const playerStatusText = document.getElementById('playerStatusText');
+    const navAudioToggle = document.getElementById('navAudioToggle');
+    const navAudioLabel = document.getElementById('navAudioLabel');
+    const welcomeCurtain = document.getElementById('welcomeCurtain');
+    const enterBtn = document.getElementById('enterBtn');
+
+    let isAudioPlaying = false;
+
+    function updateAudioUI(playing) {
+      isAudioPlaying = playing;
+      if (playing) {
+        playerVinyl.classList.add('playing');
+        document.getElementById('floatingPlayer').classList.add('playing');
+        playIcon.textContent = '⏸';
+        playerStatusText.textContent = 'Playing for you';
+        navAudioLabel.textContent = 'Pause Music';
+      } else {
+        playerVinyl.classList.remove('playing');
+        document.getElementById('floatingPlayer').classList.remove('playing');
+        playIcon.textContent = '▶';
+        playerStatusText.textContent = 'Music paused';
+        navAudioLabel.textContent = 'Play Music';
+      }
+    }
+
+    async function startAudio() {
+      try {
+        audio.volume = 0.85;
+        await audio.play();
+        updateAudioUI(true);
+      } catch (err) {
+        console.log("Autoplay waiting for user gesture:", err);
+        updateAudioUI(false);
+      }
+    }
+
+    function toggleAudio() {
+      if (audio.paused) {
+        audio.play().then(() => updateAudioUI(true)).catch(() => {});
+      } else {
+        audio.pause();
+        updateAudioUI(false);
+      }
+    }
+
+    // Try starting immediately on load
+    window.addEventListener('DOMContentLoaded', () => {
+      startAudio();
+    });
+
+    // Enter curtain button click
+    enterBtn.addEventListener('click', () => {
+      welcomeCurtain.classList.add('hidden');
+      startAudio();
+    });
+
+    // Also if she taps or clicks anywhere on curtain, enter and play
+    welcomeCurtain.addEventListener('click', (e) => {
+      if (!welcomeCurtain.classList.contains('hidden')) {
+        welcomeCurtain.classList.add('hidden');
+        startAudio();
+      }
+    });
+
+    // First user interaction anywhere starts the soundtrack if blocked
+    const unlockAudio = () => {
+      if (audio.paused && !welcomeCurtain.classList.contains('hidden')) {
+        startAudio();
+      }
+      window.removeEventListener('pointerdown', unlockAudio);
+      window.removeEventListener('keydown', unlockAudio);
+    };
+    window.addEventListener('pointerdown', unlockAudio, { passive: true });
+    window.addEventListener('keydown', unlockAudio, { passive: true });
+
+    playerPlayBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleAudio();
+    });
+
+    navAudioToggle.addEventListener('click', () => {
+      toggleAudio();
+    });
+
+    /* --------------------------------------------------------------------------
+       Render 11-Photo Vault Grid
+       -------------------------------------------------------------------------- */
+    const vaultGrid = document.getElementById('vaultGrid');
+
+    function renderVault(filter = 'all') {
+      vaultGrid.innerHTML = '';
+      PHOTOS.forEach((photo, idx) => {
+        if (filter !== 'all' && photo.category !== filter) return;
+
+        const card = document.createElement('div');
+        card.className = 'gallery-card';
+        card.setAttribute('data-index', idx);
+
+        card.innerHTML = `
+          <div class="gallery-card-inner">
+            <div class="card-front">
+              <img src="${resolveImgPath(photo.file)}" 
+                   alt="${photo.title}" 
+                   loading="lazy"
+                   onerror="this.onerror=null;this.src='${resolveRemoteFallback(photo.file)}';">
+              <div class="card-front-overlay">
+                <h4 class="front-title">${photo.title}</h4>
+                <div class="front-sub">
+                  <span>${photo.date}</span>
+                  <span class="flip-hint">Tap to flip ↺</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-back">
+              <div class="back-tape"></div>
+              <div>
+                <h4 class="back-title">${photo.title}</h4>
+                <div style="font-size: 11px; color: #a48c92; text-transform: uppercase;">${photo.date}</div>
+              </div>
+              <div class="back-note">“${photo.note}”</div>
+              <div class="back-footer">
+                <span>— Note for Camille</span>
+                <button class="btn-view-full" data-view-idx="${idx}">View Full ⚲</button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        // Card flip listener
+        card.addEventListener('click', (e) => {
+          if (e.target.closest('.btn-view-full')) {
+            openLightbox(idx);
+            return;
+          }
+          card.classList.toggle('flipped');
+        });
+
+        vaultGrid.appendChild(card);
+      });
+    }
+
+    renderVault('all');
+
+    // Filter Buttons
+    document.querySelectorAll('.vault-filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.vault-filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderVault(btn.getAttribute('data-filter'));
+      });
+    });
+
+    /* --------------------------------------------------------------------------
+       Reasons Generator
+       -------------------------------------------------------------------------- */
+    const reasonDisplay = document.getElementById('reasonDisplay');
+    const nextReasonBtn = document.getElementById('nextReasonBtn');
+    let reasonIndex = 0;
+
+    nextReasonBtn.addEventListener('click', () => {
+      reasonDisplay.classList.add('updating');
+      setTimeout(() => {
+        reasonIndex = (reasonIndex + 1) % REASONS.length;
+        reasonDisplay.textContent = `“${REASONS[reasonIndex]}”`;
+        reasonDisplay.classList.remove('updating');
+      }, 250);
+    });
+
+    /* --------------------------------------------------------------------------
+       Envelope & Letter Modal
+       -------------------------------------------------------------------------- */
+    const envelopeTrigger = document.getElementById('envelopeTrigger');
+    const openLetterBtn = document.getElementById('openLetterBtn');
+    const letterModal = document.getElementById('letterModal');
+    const closeLetterBtn = document.getElementById('closeLetterBtn');
+
+    function openLetter() {
+      envelopeTrigger.classList.add('open-flap');
+      setTimeout(() => {
+        letterModal.classList.add('active');
+        closeLetterBtn.focus();
+      }, 400);
+    }
+
+    function closeLetter() {
+      letterModal.classList.remove('active');
+      envelopeTrigger.classList.remove('open-flap');
+    }
+
+    envelopeTrigger.addEventListener('click', openLetter);
+    envelopeTrigger.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openLetter();
+      }
+    });
+    openLetterBtn.addEventListener('click', openLetter);
+    closeLetterBtn.addEventListener('click', closeLetter);
+    letterModal.addEventListener('click', (e) => {
+      if (e.target === letterModal) closeLetter();
+    });
+
+    /* --------------------------------------------------------------------------
+       Cinematic Lightbox
+       -------------------------------------------------------------------------- */
+    const lightboxModal = document.getElementById('lightboxModal');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const lightboxCaption = document.getElementById('lightboxCaption');
+    const closeLightboxBtn = document.getElementById('closeLightboxBtn');
+    const prevPhotoBtn = document.getElementById('prevPhotoBtn');
+    const nextPhotoBtn = document.getElementById('nextPhotoBtn');
+
+    let currentPhotoIdx = 0;
+
+    function openLightbox(index) {
+      currentPhotoIdx = (index + PHOTOS.length) % PHOTOS.length;
+      const photo = PHOTOS[currentPhotoIdx];
+      lightboxImg.src = resolveImgPath(photo.file);
+      lightboxImg.onerror = () => {
+        lightboxImg.src = resolveRemoteFallback(photo.file);
+      };
+      lightboxCaption.innerHTML = `<strong>${photo.title}</strong> — ${photo.date}<br><span style="color: #dfb282; font-family: var(--font-handwriting); font-size: 20px;">“${photo.note}”</span>`;
+      lightboxModal.classList.add('active');
+    }
+
+    function closeLightbox() {
+      lightboxModal.classList.remove('active');
+    }
+
+    function nextPhoto() {
+      openLightbox(currentPhotoIdx + 1);
+    }
+
+    function prevPhoto() {
+      openLightbox(currentPhotoIdx - 1);
+    }
+
+    closeLightboxBtn.addEventListener('click', closeLightbox);
+    nextPhotoBtn.addEventListener('click', nextPhoto);
+    prevPhotoBtn.addEventListener('click', prevPhoto);
+
+    lightboxModal.addEventListener('click', (e) => {
+      if (e.target === lightboxModal) closeLightbox();
+    });
+
+    // Story image zoom triggers
+    document.querySelectorAll('[data-img-idx]').forEach(el => {
+      el.addEventListener('click', () => {
+        const idx = parseInt(el.getAttribute('data-img-idx'), 10);
+        openLightbox(idx);
+      });
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeLetter();
+        closeLightbox();
+      } else if (lightboxModal.classList.contains('active')) {
+        if (e.key === 'ArrowRight') nextPhoto();
+        if (e.key === 'ArrowLeft') prevPhoto();
+      }
+    });
+
+    /* --------------------------------------------------------------------------
+       Intersection Observer (Scroll Reveal & Nav Highlight)
+       -------------------------------------------------------------------------- */
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // Nav Active Link Sync
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    window.addEventListener('scroll', () => {
+      let currentSection = '';
+      sections.forEach(section => {
+        const top = section.offsetTop - 120;
+        if (window.scrollY >= top) {
+          currentSection = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${currentSection}`) {
+          link.classList.add('active');
+        }
+      });
+    }, { passive: true });
+
+    /* --------------------------------------------------------------------------
+       Ambient Star Dust Canvas Animation (Ultra Lightweight 60fps)
+       -------------------------------------------------------------------------- */
+    const canvas = document.getElementById('starCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let animationFrameId;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initParticles();
+    }
+
+    function initParticles() {
+      particles = [];
+      const count = Math.min(window.innerWidth < 700 ? 35 : 75, 80);
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          radius: Math.random() * 1.5 + 0.5,
+          color: Math.random() > 0.4 ? 'rgba(226, 75, 96, ' : 'rgba(223, 178, 130, ',
+          alpha: Math.random() * 0.7 + 0.15,
+          vx: (Math.random() - 0.5) * 0.25,
+          vy: -Math.random() * 0.45 - 0.15
+        });
+      }
+    }
+
+    function drawParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let p of particles) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `${p.color}${p.alpha})`;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = 'rgba(226, 75, 96, 0.5)';
+        ctx.fill();
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.y < 0) {
+          p.y = canvas.height + 5;
+          p.x = Math.random() * canvas.width;
+        }
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+      }
+      animationFrameId = requestAnimationFrame(drawParticles);
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    drawParticles();
+
+    // Pause canvas when page is not visible to save battery
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        cancelAnimationFrame(animationFrameId);
+      } else {
+        drawParticles();
+      }
+    });
+  </script>
+</body>
+</html>
